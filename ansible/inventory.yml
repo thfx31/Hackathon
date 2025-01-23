@@ -2,4 +2,5 @@ all:
   children:
     servers:
       hosts:
-        debian:
+        mangouste1:
+        mangouste2:

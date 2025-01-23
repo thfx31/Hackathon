@@ -1,0 +1,74 @@
+version: "3.8"
+
+services:
+  postgresql-primary:
+    image: bitnami/postgresql-repmgr:latest
+    environment:
+      # Basic Postgres settings
+      - POSTGRESQL_POSTGRES_PASSWORD=
+      - POSTGRESQL_USERNAME=
+      - POSTGRESQL_PASSWORD=
+      - POSTGRESQL_DATABASE=
+
+      # Repmgr primary settings
+      - REPMGR_PRIMARY_ROLE=true
+      - REPMGR_NODE_NAME=postgresql-primary-0
+      - REPMGR_NODE_ID=1
+      - REPMGR_NODE_NETWORK_NAME=postgresql-primary
+      - REPMGR_PARTNER_NODES=postgresql-primary,postgresql-replica
+      - REPMGR_PORT_NUMBER=5432
+      - REPMGR_PASSWORD=
+      - REPMGR_PRIMARY_HOST=postgresql-primary
+
+    volumes:
+      - postgres_primary_data:/bitnami/postgresql
+    networks:
+      - postgres_net
+    deploy:
+      replicas: 1
+      placement:
+        # Run on the manager host
+        constraints:
+          - node.role == manager
+    ports:
+      - "5432:5432"  # Expose the port if needed
+
+  postgresql-replica:
+    image: bitnami/postgresql-repmgr:latest
+    environment:
+      # Basic Postgres settings
+      - POSTGRESQL_POSTGRES_PASSWORD=
+      - POSTGRESQL_USERNAME=
+      - POSTGRESQL_PASSWORD=
+      - POSTGRESQL_DATABASE=
+
+      # Repmgr replica settings
+      - REPMGR_PRIMARY_ROLE=false
+      - REPMGR_NODE_NAME=postgresql-replica-0
+      - REPMGR_NODE_ID=2
+      - REPMGR_NODE_NETWORK_NAME=postgresql-replica
+      - REPMGR_PARTNER_NODES=postgresql-primary,postgresql-replica
+      - REPMGR_PORT_NUMBER=5432
+      - REPMGR_PASSWORD=
+      - REPMGR_PRIMARY_HOST=postgresql-primary
+
+    volumes:
+      - postgres_replica_data:/bitnami/postgresql
+    networks:
+      - postgres_net
+    deploy:
+      replicas: 1
+      placement:
+        # Run on worker node
+        constraints:
+          - node.role == worker
+
+networks:
+  postgres_net:
+    external: true
+
+volumes:
+  postgres_primary_data:
+    driver: local
+  postgres_replica_data:
+    driver: local
