@@ -1,0 +1,5 @@
+all:
+  children:
+    servers:
+      hosts:
+        debian:

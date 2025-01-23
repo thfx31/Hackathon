@@ -1,0 +1,12 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install packages
+  ansible.builtin.apt:
+    name: "{{ postinstall_extra_packages }}"
+    state: present
+
+- name: Install docker
+  ansible.builtin.import_tasks: docker.yml

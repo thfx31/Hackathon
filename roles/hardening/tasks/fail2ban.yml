@@ -1,0 +1,21 @@
+- name: Install Fail2ban
+  ansible.builtin.apt:
+    name: fail2ban
+    state: present
+
+- name: Create conf file
+  ansible.builtin.copy:
+    dest: /etc/fail2ban/jail.local
+    content: |
+      [DEFAULT]
+      bantime = 3600
+      findtime = 600
+      maxretry = 5
+      [sshd]
+      enabled = true
+      logpath  = /var/log/auth.log
+
+- name: Start Fail2ban service
+  ansible.builtin.service:
+    name: fail2ban
+    state: started

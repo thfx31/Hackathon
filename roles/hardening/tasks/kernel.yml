@@ -1,0 +1,16 @@
+- name: Appliquer des configurations sysctl pour améliorer la sécurité
+  ansible.builtin.sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: yes
+  loop:
+    - { name: "net.ipv4.icmp_echo_ignore_broadcasts", value: "1" }
+    - { name: "net.ipv4.conf.all.forwarding", value: "0" }
+    - { name: "net.ipv4.tcp_max_syn_backlog", value: "2048" }
+    - { name: "net.ipv4.conf.all.accept_source_route", value: "0" }
+    - { name: "net.ipv4.conf.all.accept_redirects", value: "0" }
+    - { name: "net.ipv4.conf.all.secure_redirects", value: "0" }
+    - { name: "fs.suid_dumpable", value: "0" }
+    - { name: "kernel.sysrq", value: "0" }
+    - { name: "net.ipv4.conf.all.rp_filter", value: "1" }

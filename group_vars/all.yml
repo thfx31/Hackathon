@@ -1,0 +1,38 @@
+# PostInstall role vars
+postinstall_extra_packages:
+- vim
+- wget
+- curl
+- git
+- rsyslog
+- apt-transport-https
+- ca-certificates
+- software-properties-common
+
+# Docker vars
+docker_ansible_user: "debian"
+docker_group: "docker"
+docker_repo: "https://download.docker.com/linux/debian"
+docker_gpg_url: "https://download.docker.com/linux/debian/gpg"
+docker_install_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+# UFW role vars
+ufw_port_dns: 53
+
+# SSHD role vars
+sshd_config_path: /etc/ssh/sshd_config
+sshd_allowed_users: ["debian"]
+sshd_ssh_groups: ["sshusers"]
+sshd_ssh_port: 22
+sshd_password_authentication: true
+sshd_permit_root_login: false
+sshd_max_auth_retries: 5
+sshd_allow_tcp_forwarding: false
+sshd_x11_forwarding: false
+sshd_client_alive_interval: 300
+sshd_client_alive_count_max: 3

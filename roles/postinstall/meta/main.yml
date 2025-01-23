@@ -1,0 +1,9 @@
+galaxy_info:
+  author: thfx31
+  description: Post install role
+
+  min_ansible_version: 2.1
+
+  galaxy_tags: []
+
+dependencies: []

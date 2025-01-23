@@ -1,0 +1,12 @@
+---
+- name: Install and configure UFW
+  ansible.builtin.import_tasks: ufw.yml
+
+- name: Install and configure fail2ban
+  ansible.builtin.import_tasks: fail2ban.yml
+
+- name: SSHD hardening
+  ansible.builtin.import_tasks: sshd.yml
+
+- name: Kernel hardening
+  ansible.builtin.import_tasks: kernel.yml
