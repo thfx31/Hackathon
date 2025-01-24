@@ -56,8 +56,9 @@ services:
       - PG_USER=myuser
       - PG_PASS=mypassword
       - PG_DB=mydatabase
-      - PG_HOST=db
+      - PG_HOST=postgresql-primary
       - API_PORT=3000
+
     deploy:
       replicas: 2
       restart_policy:
@@ -70,16 +71,63 @@ services:
         - traefik.http.routers.back-hippo.tls=true
         - traefik.http.routers.back-hippo.tls.certresolver=myresolver
 
-  db:
-    image: postgres:latest
+  postgresql-primary:
+    image: bitnami/postgresql-repmgr:latest
     environment:
-      POSTGRES_USER: myuser # Nom d'utilisateur pour la base de données
-      POSTGRES_PASSWORD: mypassword # Mot de passe pour cet utilisateur
-      POSTGRES_DB: mydatabase # Nom de la base de données à créer
+      # Basic Postgres settings
+      - POSTGRESQL_POSTGRES_PASSWORD=mypassword
+      - POSTGRESQL_USERNAME=myuser
+      - POSTGRESQL_PASSWORD=mypassword
+      - POSTGRESQL_DATABASE=mydatabase
+
+      # Repmgr primary settings
+      - REPMGR_PRIMARY_ROLE=true
+      - REPMGR_NODE_NAME=postgresql-primary-0
+      - REPMGR_NODE_ID=1
+      - REPMGR_NODE_NETWORK_NAME=postgresql-primary
+      - REPMGR_PARTNER_NODES=postgresql-primary,postgresql-replica
+      - REPMGR_PORT_NUMBER=5432
+      - REPMGR_PASSWORD=cool
+      - REPMGR_PRIMARY_HOST=postgresql-primary
+
     volumes:
-      - postgres_data:/var/lib/postgresql/data # Volumes pour persister les données
+      - postgres_primary_data:/bitnami/postgresql
+    deploy:
+      replicas: 1
+      placement:
+        # Run on the manager host
+        constraints:
+          - node.role == manager
     ports:
-      - "5432:5432"
+      - "5432:5432" # Expose the port if needed
+
+  postgresql-replica:
+    image: bitnami/postgresql-repmgr:latest
+    environment:
+      # Basic Postgres settings
+      - POSTGRESQL_POSTGRES_PASSWORD=mypassword
+      - POSTGRESQL_USERNAME=myuser
+      - POSTGRESQL_PASSWORD=mypassword
+      - POSTGRESQL_DATABASE=mydatabase
+
+      # Repmgr replica settings
+      - REPMGR_PRIMARY_ROLE=false
+      - REPMGR_NODE_NAME=postgresql-replica-0
+      - REPMGR_NODE_ID=2
+      - REPMGR_NODE_NETWORK_NAME=postgresql-replica
+      - REPMGR_PARTNER_NODES=postgresql-primary,postgresql-replica
+      - REPMGR_PORT_NUMBER=5432
+      - REPMGR_PASSWORD=cool
+      - REPMGR_PRIMARY_HOST=postgresql-primary
+
+    volumes:
+      - postgres_replica_data:/bitnami/postgresql
+    deploy:
+      replicas: 1
+      placement:
+        # Run on worker node
+        constraints:
+          - node.role == worker
 
 networks:
   default:
@@ -87,4 +135,7 @@ networks:
 
 volumes:
   traefik-certificates:
-  postgres_data:
+  postgres_primary_data:
+    driver: local
+  postgres_replica_data:
+    driver: local

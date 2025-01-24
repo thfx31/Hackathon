@@ -31,7 +31,7 @@ services:
         constraints:
           - node.role == manager
     ports:
-      - "5432:5432"  # Expose the port if needed
+      - "5432:5432" # Expose the port if needed
 
   postgresql-replica:
     image: bitnami/postgresql-repmgr:latest
