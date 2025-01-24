@@ -1,6 +1,3 @@
-Here's an updated `README.md` file that includes the additional configuration for Prometheus (`prometheus.yml`):
-
-```markdown
 # Monitoring Stack with Prometheus, Grafana, and Node Exporter
 
 This project provides a simple Docker Compose setup to deploy Prometheus, Grafana, and Node Exporter for monitoring system metrics and visualizing them in Grafana.
