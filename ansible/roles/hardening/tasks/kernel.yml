@@ -1,4 +1,4 @@
-- name: Appliquer des configurations sysctl pour améliorer la sécurité
+- name: Apply kernel hardening
   ansible.builtin.sysctl:
     name: "{{ item.name }}"
     value: "{{ item.value }}"

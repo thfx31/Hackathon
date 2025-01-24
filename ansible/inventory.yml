@@ -2,5 +2,5 @@ all:
   children:
     servers:
       hosts:
-        mangouste1:
-        mangouste2:
+        mangoustes1:
+        mangoustes2:

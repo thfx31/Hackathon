@@ -23,6 +23,12 @@ docker_install_packages:
 
 # UFW role vars
 ufw_port_dns: 53
+ufw_port_http: 80
+ufw_port_https: 443
+ufw_port_dockerswarm:
+  - 2377
+  - 7946
+  - 4789
 
 # SSHD role vars
 sshd_config_path: /etc/ssh/sshd_config
