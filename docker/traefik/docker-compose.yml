@@ -1,3 +1,5 @@
+version: '3.7'
+
 services:
   traefik:
     image: traefik:latest
@@ -55,10 +57,7 @@ services:
       - PG_PASS=mypassword
       - PG_DB=mydatabase
       - PG_HOST=db
-      - API_PORT= 3000
-
-    ports:
-      - "3000:3000"
+      - API_PORT=3000
     deploy:
       replicas: 2
       restart_policy:
@@ -66,20 +65,22 @@ services:
       labels:
         - traefik.enable=true
         - traefik.http.routers.back-hippo.rule=Host(`api.hippo.mangoustes.ynov`)
-        - traefik.http.services.back-hippo.loadbalancer.server.port=80
+        - traefik.http.services.back-hippo.loadbalancer.server.port=3000
         - traefik.http.routers.back-hippo.entrypoints=web,websecure
         - traefik.http.routers.back-hippo.tls=true
         - traefik.http.routers.back-hippo.tls.certresolver=myresolver
+
   db:
     image: postgres:latest
     environment:
       POSTGRES_USER: myuser # Nom d'utilisateur pour la base de données
-      POSTGRES_PASSWORD: mypassword # Mot de passe pour cet utilisxzateur
+      POSTGRES_PASSWORD: mypassword # Mot de passe pour cet utilisateur
       POSTGRES_DB: mydatabase # Nom de la base de données à créer
     volumes:
       - postgres_data:/var/lib/postgresql/data # Volumes pour persister les données
     ports:
       - "5432:5432"
+
 networks:
   default:
     driver: overlay
