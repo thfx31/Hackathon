@@ -19,8 +19,8 @@ This project provides a simple Docker Compose setup to deploy Prometheus, Grafan
 
 1. Clone this repository:
    ```bash
-   git clone <https://github.com/thfx31/Hackathon/tree/main/Monitoring>
-   cd <Monitoring>
+   git clone https://github.com/thfx31/Hackathon/tree/main/Monitoring
+   cd Monitoring
    ```
 
 2. Start the stack using Docker Compose:
