@@ -10,7 +10,7 @@ postinstall_extra_packages:
 - software-properties-common
 
 # Docker vars
-docker_ansible_user: "mangoustes"
+docker_ansible_user: "admintf"
 docker_group: "docker"
 docker_repo: "https://download.docker.com/linux/debian"
 docker_gpg_url: "https://download.docker.com/linux/debian/gpg"
@@ -32,7 +32,7 @@ ufw_port_dockerswarm:
 
 # SSHD role vars
 sshd_config_path: /etc/ssh/sshd_config
-sshd_allowed_users: ["mangoustes"]
+sshd_allowed_users: ["admintf"]
 sshd_ssh_groups: ["sshusers"]
 sshd_ssh_port: 22
 sshd_password_authentication: true
