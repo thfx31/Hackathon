@@ -1,0 +1,59 @@
+---
+- name: Ensure OpenSSH server is installed
+  ansible.builtin.apt:
+    name: openssh-server
+    state: present
+
+- name: Backup the existing SSHD config file
+  ansible.builtin.copy:
+    src: "{{ sshd_config_path }}"
+    dest: "{{ sshd_config_path }}.bak"
+    owner: root
+    group: root
+    mode: 0600
+    remote_src: true
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Configure SSHD parameters
+  ansible.builtin.blockinfile:
+    path: "{{ sshd_config_path }}"
+    block: |
+      Port {{ sshd_ssh_port }}
+      PermitRootLogin {{ 'yes' if sshd_permit_root_login else 'no' }}
+      AllowUsers {{ sshd_allowed_users | join(' ') }}
+      MaxAuthTries {{ sshd_max_auth_retries }}
+      AllowTcpForwarding {{ 'yes' if sshd_allow_tcp_forwarding else 'no' }}
+      X11Forwarding {{ 'yes' if sshd_x11_forwarding else 'no' }}
+      ClientAliveInterval {{ sshd_client_alive_interval }}
+      ClientAliveCountMax {{ sshd_client_alive_count_max }}
+      PasswordAuthentication no
+      ChallengeResponseAuthentication no
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Ensure correct permissions on the SSH configuration
+  ansible.builtin.file:
+    path: "{{ sshd_config_path }}"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Update banner message
+  ansible.builtin.copy:
+      dest: /etc/motd
+      content: |
+        #################################################################
+        *                                                               #
+        * This system is for the use of authorized users only.          #
+        * Usage of this system monitored & recorded by system personnel.#
+        *                                                               #
+        #################################################################
+      owner: root
+      group: root
+      mode: '0744'     
+
+- name: Restart SSH service to apply changes
+  ansible.builtin.service:
+    name: sshd
+    state: restarted
